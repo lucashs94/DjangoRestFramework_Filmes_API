@@ -3,25 +3,32 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from rest_framework import generics
 
 from .models import Genre
+from .serializers import GenreSerializer
 
 
-@csrf_exempt
-def genre_list(request):
-    if request.method == 'GET':
-        genres = Genre.objects.all()
-        data = [{'id': genre.id, 'name': genre.name} for genre in genres]
-        return JsonResponse(data, safe=False)
+class GenreCreateListView(generics.ListCreateAPIView):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+
+
+# @csrf_exempt
+# def genre_list(request):
+#     if request.method == 'GET':
+#         genres = Genre.objects.all()
+#         data = [{'id': genre.id, 'name': genre.name} for genre in genres]
+#         return JsonResponse(data, safe=False)
     
-    elif request.method == 'POST':
-        data = json.loads(request.body.decode('utf-8'))
-        genre = Genre(name=data['name'])
-        genre.save()
-        return JsonResponse(
-            { 'id': genre.id, 'name': genre.name }, 
-            status=201
-        )
+#     elif request.method == 'POST':
+#         data = json.loads(request.body.decode('utf-8'))
+#         genre = Genre(name=data['name'])
+#         genre.save()
+#         return JsonResponse(
+#             { 'id': genre.id, 'name': genre.name }, 
+#             status=201
+#         )
         
         
 @csrf_exempt
